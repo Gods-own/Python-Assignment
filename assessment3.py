@@ -224,7 +224,18 @@ while True:
         option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
         
         if option1 not in [1.1,1.2,1.3]:
-            sys.exit("Please select a valid option")              
+            sys.exit("Please select a valid option")     
+            
+elif menu == 2:    
+    option12 = float(input(f"Choose one of the following options: \n 2.1 - Print all student grade information ascendingly by final mark\n 2.2 - Print all student grade information descendingly by final mark \n 2.3 - Go back to the main menu \n"))
+    
+    if option2 not in [2.1,2.2,2.3]:
+        sys.exit("Please select a valid option")
+
+    if option2 == 2.1:
+        sorted_student_scores = sorted(student_scores, key=lambda d: d['final_mark'])
+        for dic in sorted_student_scores:
+            print("{:<10} {:<15} {:<5} {:<5} {:<6}")            
             
         
 elif menu == 4:
