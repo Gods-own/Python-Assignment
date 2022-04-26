@@ -14,6 +14,9 @@ class Student:
         sum_of_assessments = math.ceil(self.get_score_list()[0] * 0.2 + self.get_score_list()[1] * 0.4 + self.get_score_list()[2] * 0.4)
         return sum_of_assessments
 
+    def validateStudentId(self, studentID):
+        pass    
+
 
 class BITStudent(Student):
     def __init__(self, scores, mark):
@@ -377,16 +380,23 @@ student_scores = []
 
 menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
 
-if menu not in [1,2,3,4]:
-    sys.exit("Please enter a whole number between 1 and 4")
+while True:
+    if menu not in [1,2,3,4]:
+        menu = int(input(f"Please enter a whole number between 1 and 4: "))
+    else:
+        break    
 
 while True:  
 
     if menu == 1:
         option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
-    
-        if option1 not in [1.1,1.2,1.3]:
-            sys.exit("Please select a valid option")
+
+        while True:
+            if option1 not in [1.1,1.2,1.3]:
+                # sys.exit("Please select a valid option")
+                option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))
+            else: 
+                break    
 
         while True:
                 
@@ -402,16 +412,21 @@ while True:
                 print(student_scores)
                 break
 
-            option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
-        
-            if option1 not in [1.1,1.2,1.3]:
-                sys.exit("Please select a valid option")  
+            while True:
+                if option1 not in [1.1,1.2,1.3]:
+                    # sys.exit("Please select a valid option")
+                    option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))
+                else: 
+                    break 
         
     elif menu == 2:    
         option2 = float(input(f"Choose one of the following options: \n 2.1 - Print all student grade information ascendingly by final mark\n 2.2 - Print all student grade information descendingly by final mark \n 2.3 - Go back to the main menu \n"))
         
-        if option2 not in [2.1,2.2,2.3]:
-            sys.exit("Please select a valid option")
+        while True:
+            if option2 not in [2.1,2.2,2.3]:
+                option2 = float(input(f"Your options are 2.1, 2.2 or 2.3: "))
+            else: 
+                break 
 
         while True:    
 
@@ -429,8 +444,11 @@ while True:
 
             option2 = float(input(f"Choose one of the following options: \n 2.1 - Print all student grade information ascendingly by final mark\n 2.2 - Print all student grade information descendingly by final mark \n 2.3 - Go back to the main menu \n"))
         
-            if option2 not in [2.1,2.2,2.3]:
-                sys.exit("Please select a valid option")
+            while True:
+                if option2 not in [2.1,2.2,2.3]:
+                    option2 = float(input(f"Your options are 2.1, 2.2 or 2.3: "))
+                else: 
+                    break 
 
             
     elif menu == 3:
@@ -442,8 +460,11 @@ while True:
 
     menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
 
-    if menu not in [1,2,3,4]:
-        sys.exit("Please enter a whole number between 1 and 4")    
+    while True:
+        if menu not in [1,2,3,4]:
+            menu = int(input(f"Please enter a whole number between 1 and 4: "))
+        else:
+            break    
 
 
 # student_scores = []        
