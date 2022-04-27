@@ -1,0 +1,556 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 import math\par
+import sys\par
+\par
+class ScoreProcessing:\par
+    def __init__(self, scores):\par
+        self.scores = scores\par
+\par
+    def get_score_list(self):\par
+        list_scores = self.scores.split(",")\par
+        try:\par
+            list_scores = [float(i) for i in list_scores]\par
+            return list_scores\par
+        except ValueError as ve:  \par
+            return False \par
+\par
+    def finalMark(self):\par
+        sum_of_assessments = math.ceil(self.get_score_list()[0] * 0.2 + self.get_score_list()[1] * 0.4 + self.get_score_list()[2] * 0.4)\par
+        return sum_of_assessments\par
+\par
+\par
+class UserInput:\par
+    def studentIDInput(self):\par
+        student_id = input("Enter student ID: ")\par
+        while True:\par
+            if self.validateStudentId(student_id) == False:\par
+                print("Student Id must have A capital letter 'A' followed by 8 digits")\par
+                student_id = input("Enter student ID: ")\par
+            else:\par
+                break \par
+        return student_id \par
+\par
+    def studentNameInput(self):\par
+        student_name = input("Enter student name: ")\par
+        while True:\par
+            if self.validateStudentName(student_name) == False:\par
+                print("Please Input First Name and Last Name")\par
+                student_name = input("Enter student name: ")\par
+            else:\par
+                break \par
+        return student_name  \par
+\par
+    def studentAssessmentInput(self, input_question):\par
+        student_assessment  = input(input_question)\par
+        while True:\par
+            if self.validateStudentAssessments(student_assessment) == False:\par
+                student_assessment = input(input_question)\par
+            else:\par
+                break \par
+        return student_assessment   \par
+\par
+    def studentSupplementaryScoreInput(self):\par
+        Supplementary_score = input("What is this student's supplementary exam mark: ")\par
+        while True:\par
+            if self.validateStudentSupplementaryScore(Supplementary_score) == False:\par
+                print("Score must be an integer between 0 and 100")\par
+                Supplementary_score = input("What is this student's supplementary exam mark: ")\par
+            else:\par
+                break\par
+        return int(Supplementary_score)            \par
+\par
+    def validateStudentId(self, studentID):\par
+        character_count = len(studentID)\par
+        first_character = studentID[0:1] \par
+        eight_digits = studentID[-8: ]\par
+        if character_count == 9:\par
+            return True\par
+        else:\par
+            return False     \par
+\par
+        if first_character == "A" and eight_digits.isdigit():\par
+            return True\par
+        else:\par
+            return False \par
+\par
+    def validateStudentName(self, studentName):\par
+        studentNames = studentName.split(" ")\par
+        if len(studentNames) != 2:\par
+            return False\par
+\par
+        for x in studentNames:\par
+            if x.isalpha() == True:\par
+                continue\par
+            else:\par
+                return False\par
+        return True            \par
+\par
+    def validateStudentAssessments(self, scores):\par
+        if ScoreProcessing(scores).get_score_list() == False:\par
+            return False\par
+        if len(ScoreProcessing(scores).get_score_list()) != 3:\par
+            return False\par
+        for assessment in ScoreProcessing(scores).get_score_list():\par
+            if assessment >= 0 and assessment <= 100:\par
+                continue\par
+            else: \par
+                return False\par
+        return True\par
+\par
+    def validateStudentSupplementaryScore(self, score):\par
+        try:\par
+            score = int(score)\par
+        except ValueError as ve:  \par
+            return False \par
+\par
+        if score < 0 or score > 100:\par
+            return False    \par
+        else:    \par
+            return True                           \par
+\par
+class BITStudent(ScoreProcessing):\par
+    def __init__(self, scores, mark):\par
+        super().__init__(scores)\par
+        self.mark = mark\par
+\par
+    def gradeLetter(self):\par
+        if 100 >= self.mark and self.mark  >= 85:\par
+            grade = "HD"\par
+            return grade\par
+        elif 84 >= self.mark  and self.mark  >= 75:\par
+            grade = "D"   \par
+            return grade\par
+        elif 74 >= self.mark  and self.mark  >= 65:\par
+            grade = "C"   \par
+            return grade\par
+        elif 64 >= self.mark  and self.mark  >= 50:\par
+            grade = "P"   \par
+            return grade \par
+        elif 49 >= self.mark  and self.mark  >= 45:\par
+            b = 0\par
+            for y in self.get_score_list():\par
+                if y < 50:\par
+                    b = b + 1\par
+                else:\par
+                    continue\par
+\par
+            if 0 in self.get_score_list() or b >= 2:\par
+                grade = "F"\par
+                return grade  \par
+            elif 0 not in self.get_score_list() and self.get_score_list()[2] < 50:\par
+                grade = "SE"\par
+                return grade\par
+            elif 0 not in self.get_score_list() and self.get_score_list()[0] < 50 or self.get_score_list()[1] < 50:\par
+                grade = "SA"\par
+                return grade  \par
+        \par
+        elif 44 >= self.mark and self.mark >= 0:\par
+            a = 0\par
+            for x in self.get_score_list():\par
+                if x == 0:\par
+                    a = a + 1\par
+                else:\par
+                    continue\par
+            if a >= 2:            \par
+                grade = "AF"   \par
+                return grade  \par
+            else:\par
+                grade = "F"                  \par
+                return grade  \par
+\par
+    def gradePoint(self, grade):\par
+        if grade == "HD":\par
+            point_value = 4.0\par
+            return point_value\par
+        elif grade == "D":\par
+            point_value = 3.0 \par
+            return point_value\par
+        elif grade == "C":\par
+            point_value = 2.0 \par
+            return point_value        \par
+        elif grade == "P":\par
+            point_value = 1.0  \par
+            return point_value \par
+        elif grade == "SP":\par
+            point_value = 0.5 \par
+            return point_value  \par
+        elif grade == "F":\par
+            point_value = 0  \par
+            return point_value    \par
+\par
+    def gradeLetterFinal(self, Supplementary_score): \par
+            if Supplementary_score >= 50:\par
+                gradeLetter = "SP"\par
+                return gradeLetter\par
+            elif Supplementary_score < 50: \par
+                gradeLetter = "F" \par
+                return gradeLetter        \par
+\par
+\par
+class DITStudent(ScoreProcessing):                 \par
+    def __init__(self, scores, mark):\par
+        super().__init__(scores)\par
+        self.mark = mark\par
+\par
+    def gradeLetter(self):\par
+        if 100 >= self.mark and self.mark  >= 50:\par
+            grade = "CP"\par
+            return grade\par
+        elif 49 >= self.mark  and self.mark  >= 0:\par
+            grade = "NYC"   \par
+            return grade\par
+\par
+    def gradePoint(self, grade):\par
+        if grade == "CP":\par
+            point_value = 4.0\par
+            return point_value\par
+        elif grade == "NC":\par
+            point_value = 0 \par
+            return point_value\par
+\par
+    def gradeLetterFinal(self, Supplementary_score ): \par
+            if Supplementary_score >= 50:\par
+                gradeLetter = "CP"\par
+                return gradeLetter\par
+            if Supplementary_score < 50:\par
+                gradeLetter = "NC"\par
+                return gradeLetter    \par
+\par
+class StudentInfo:\par
+    def __init__(self, studentID, name, studentType, assessments, gradeLetter, gradePoint, totalMark, gradeLetterFinal):\par
+        self.studentID = studentID\par
+        self.name = name\par
+        self.studentType = studentType\par
+        self.assessments = assessments\par
+        self.gradeLetter = gradeLetter\par
+        self.gradePoint = gradePoint\par
+        self.totalMark = totalMark\par
+        self.gradeLetterFinal = gradeLetterFinal\par
+\par
+    def studentPerformance(self):\par
+        student_Info = \{\par
+            "studentID": self.studentID,\par
+            "name": self.name,\par
+            "studentType": self.studentType,\par
+            "assessments": self.assessments,\par
+            "gradeLetter": self.gradeLetter,\par
+            "gradePoint": self.gradePoint,\par
+            "totalMark": self.totalMark,\par
+            "gradeLetterFinal": self.gradeLetterFinal\par
+        \}   \par
+        return student_Info\par
+\par
+class Option1(UserInput):\par
+\par
+    def option11(self):  \par
+        student_type = "BIT"\par
+        student_id = self.studentIDInput()\par
+        student_name = self.studentNameInput()\par
+        student_assessment = self.studentAssessmentInput("Enter student assessment marks (separated by comma): ")\par
+        student_assessment_list = ScoreProcessing(student_assessment).get_score_list()\par
+        final_mark = ScoreProcessing(student_assessment).finalMark()\par
+        bitStudent = BITStudent(student_assessment, final_mark)\par
+        grade_letter = bitStudent.gradeLetter()\par
+        grade_letter_final = grade_letter\par
+        grade_point = bitStudent.gradePoint(grade_letter)\par
+\par
+        if grade_letter == "SA" or grade_letter == "SE":\par
+            Supplementary_score = self.studentSupplementaryScoreInput()\par
+            grade_letter_final = bitStudent.gradeLetterFinal(Supplementary_score)\par
+            grade_point = bitStudent.gradePoint(grade_letter_final) \par
+        elif grade_letter == "AF":\par
+            grade_letter_final = "F"   \par
+            grade_point = bitStudent.gradePoint(grade_letter_final)      \par
+        \par
+        student_ee = StudentInfo(student_id, student_name, student_type, student_assessment_list, grade_letter, grade_point, final_mark, grade_letter_final)\par
+        student_list.append(student_ee.studentPerformance())   \par
+\par
+\par
+    def option12(self):     \par
+        student_type = "DIT"\par
+        student_id = self.studentIDInput()\par
+        student_name = self.studentNameInput()\par
+        student_assessment = self.studentAssessmentInput("Enter student assessment marks (separated by comma): ")\par
+        student_assessment_list = ScoreProcessing(student_assessment).get_score_list()\par
+        final_mark = ScoreProcessing(student_assessment).finalMark()\par
+        ditStudent = DITStudent(student_assessment, final_mark)\par
+        grade_letter = ditStudent.gradeLetter()\par
+        grade_point = ditStudent.gradePoint(grade_letter)  \par
+        grade_letter_final = grade_letter \par
+\par
+        if grade_letter == "NYC":\par
+            resubmission = self.studentAssessmentInput("What is this student's resubmission mark: ") \par
+            Supplementary_score = ScoreProcessing(resubmission).finalMark() \par
+            student_assessment = resubmission\par
+            student_assessment_list = ScoreProcessing(student_assessment).get_score_list()\par
+            grade_letter_final = ditStudent.gradeLetterFinal(Supplementary_score)   \par
+            grade_point = ditStudent.gradePoint(grade_letter_final) \par
+        \par
+        student_ee = StudentInfo(student_id, student_name, student_type, student_assessment_list, grade_letter, grade_point, final_mark, grade_letter_final)\par
+        student_list.append(student_ee.studentPerformance())    \par
+  \par
+\par
+class Option2:\par
+\par
+    def option21(self):  \par
+        sorted_student_list = sorted(student_list, key=lambda d: d['totalMark'], reverse=True)\par
+        for dic in sorted_student_list:\par
+            print(f"\{dic['studentID']\} \\t \{dic['name']\} \\t \{dic['studentType']\} \\t \{dic['totalMark']\} \\t \{dic['gradeLetterFinal']\} \\n")   \par
+\par
+    def option22(self):     \par
+        sorted_student_list = sorted(student_list, key=lambda d: d['totalMark'])\par
+        for dic in sorted_student_list:\par
+            print(f"\{dic['studentID']\} \\t \{dic['name']\} \\t \{dic['studentType']\} \\t \{dic['totalMark']\} \\t \{dic['gradeLetterFinal']\} \\n")     \par
+\par
+class Option3:\par
+\par
+    def no_students(self):  \par
+        no_of_students = len(student_list)\par
+        return no_of_students\par
+\par
+    def no_BIT_students(self):     \par
+        bit_count = 0\par
+        for dic in student_list:\par
+            if dic["studentType"] == "BIT":\par
+                bit_count = bit_count + 1\par
+        return bit_count  \par
+\par
+    def no_DIT_students(self):     \par
+        dit_count = 0\par
+        for dic in student_list:\par
+            if dic["studentType"] == "DIT":\par
+                dit_count = dit_count + 1\par
+        return dit_count\par
+\par
+    def no_each_grade(self):\par
+        no_HD = 0\par
+        no_D = 0\par
+        no_C = 0\par
+        no_P = 0\par
+        no_SP = 0\par
+        no_CP = 0\par
+        no_F = 0\par
+        no_AF = 0\par
+\par
+        for dic in student_list:\par
+            if dic["gradeLetterFinal"] == "HD":\par
+                no_HD += 1\par
+            elif dic["gradeLetterFinal"] == "D":\par
+                no_D += 1\par
+            elif dic["gradeLetterFinal"] == "C":\par
+                no_C += 1\par
+            elif dic["gradeLetterFinal"] == "P":\par
+                no_P += 1\par
+            elif dic["gradeLetterFinal"] == "SP":\par
+                no_SP += 1\par
+            elif dic["gradeLetterFinal"] == "CP":\par
+                no_CP += 1  \par
+            elif dic["gradeLetterFinal"] == "F":\par
+                no_F += 1      \par
+            elif dic["gradeLetter"] == "AF":\par
+                no_AF += 1   \par
+\par
+        total_HD_D_C_P_SP_CP = no_HD + no_D + no_C + no_P + no_SP + no_CP    \par
+\par
+        gradeInfo = \{\par
+            "total_No_Of_Pass_Grade": total_HD_D_C_P_SP_CP,\par
+            "total_No_Of_HD_Grade" : no_HD,\par
+            "total_No_Of_D_Grade" : no_D,\par
+            "total_No_Of_C_Grade" : no_C,\par
+            "total_No_Of_P_Grade" : no_P,\par
+            "total_No_Of_SP_Grade" : no_SP,\par
+            "total_No_Of_CP_Grade" : no_CP,\par
+            "total_No_Of_F_Grade" : no_F,\par
+            "total_No_Of_AF_Grade" : no_AF\par
+        \} \par
+\par
+        return gradeInfo\par
+\par
+    def student_pass_rate(self):\par
+        number_of_students = self.no_students()\par
+        total_No_Of_Pass_Grade = self.no_each_grade()["total_No_Of_Pass_Grade"]\par
+        pass_rate = round(((total_No_Of_Pass_Grade)/number_of_students) * 100, 2)\par
+        return pass_rate\par
+\par
+    def student_pass_rate_adj(self):\par
+        number_of_students = self.no_students()\par
+        total_No_Of_Pass_Grade = self.no_each_grade()["total_No_Of_Pass_Grade"]\par
+        total_No_Of_AF_Grade = self.no_each_grade()["total_No_Of_AF_Grade"]\par
+        pass_rate_adj = round(((total_No_Of_Pass_Grade)/(number_of_students - total_No_Of_AF_Grade)) * 100, 2)\par
+        return pass_rate_adj\par
+\par
+    def avg_assessment1(self):\par
+        total_asse1 = 0\par
+        number_of_students = self.no_students()\par
+\par
+        for dic in student_list:\par
+            total_asse1 = total_asse1 + dic["assessments"][0]\par
+        avg_mark1 = round(total_asse1/number_of_students, 2)\par
+\par
+        return avg_mark1\par
+\par
+    def avg_assessment2(self):\par
+        total_asse2 = 0\par
+        number_of_students = self.no_students()\par
+\par
+        for dic in student_list:\par
+            total_asse2 = total_asse2 + dic["assessments"][1]\par
+\par
+        avg_mark2 = round(total_asse2/number_of_students, 2)\par
+\par
+        return avg_mark2\par
+\par
+    def avg_assessment3(self):\par
+        total_asse3 = 0\par
+        number_of_students = self.no_students()\par
+\par
+        for dic in student_list:\par
+            total_asse3 = total_asse3 + dic["assessments"][2]\par
+\par
+        avg_mark3 = round(total_asse3/number_of_students, 2)\par
+\par
+        return avg_mark3\par
+\par
+    def avg_final(self):\par
+        total_final = 0\par
+        number_of_students = self.no_students()\par
+\par
+        for dic in student_list:\par
+            total_final = total_final + dic["totalMark"]\par
+\par
+        avg_markFinal = round(total_final/number_of_students, 2)\par
+\par
+        return avg_markFinal\par
+\par
+    def avg_grade_point(self):\par
+        total_grade_point = 0\par
+        number_of_students = self.no_students()\par
+\par
+        for dic in student_list:\par
+            total_grade_point = total_grade_point + dic["gradePoint"]\par
+\par
+        avg_gradePoint = round(total_grade_point/number_of_students, 1)\par
+\par
+        return avg_gradePoint     \par
+\par
+    def print_no_of_each_grade(self):\par
+        no_HD = self.no_each_grade()["total_No_Of_HD_Grade"]\par
+        no_D = self.no_each_grade()["total_No_Of_D_Grade"]\par
+        no_C = self.no_each_grade()["total_No_Of_C_Grade"]\par
+        no_P = self.no_each_grade()["total_No_Of_P_Grade"]\par
+        no_SP = self.no_each_grade()["total_No_Of_SP_Grade"]\par
+        no_CP = self.no_each_grade()["total_No_Of_CP_Grade"]\par
+        no_F = self.no_each_grade()["total_No_Of_F_Grade"]\par
+\par
+        print(no_HD)\par
+        print(no_D)\par
+        print(no_C)\par
+        print(no_P)\par
+        print(no_SP)\par
+        print(no_CP)\par
+        print(no_F)\par
+\par
+    def print_opt3_ans(self):\par
+        print(self.no_students())\par
+        print(self.no_BIT_students())\par
+        print(self.no_DIT_students())\par
+        print(self.student_pass_rate())\par
+        print(self.student_pass_rate_adj())\par
+        print(self.avg_assessment1())\par
+        print(self.avg_assessment2())\par
+        print(self.avg_assessment3())\par
+        print(self.avg_final())\par
+        print(self.avg_grade_point())\par
+        self.print_no_of_each_grade()\par
+        \par
+\par
+student_list = []        \par
+\par
+menu = int(input(f"Choose one of the following options: \\n 1 - Enter student grade information \\n 2 - Print all student grade information \\n 3 - Print class performance statistics \\n 4 - Exit \\n"))\par
+\par
+while True:\par
+    if menu not in [1,2,3,4]:\par
+        menu = int(input(f"Please enter a whole number between 1 and 4: "))\par
+    else:\par
+        break    \par
+\par
+while True:  \par
+\par
+    if menu == 1:\par
+        option1 = float(input(f"Choose one of the following options: \\n 1.1 - Enter a BIT student information \\n 1.2 - Enter a DIT student information \\n 1.3 - Go back to the main menu \\n"))\par
+\par
+        while True:\par
+            if option1 not in [1.1,1.2,1.3]:\par
+                option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))\par
+            else: \par
+                break    \par
+\par
+        while True:\par
+                \par
+            if option1 == 1.1:\par
+                option_one_of_one = Option1()\par
+                option_one_of_one.option11() \par
+\par
+            elif option1 == 1.2:   \par
+                option_one_of_two = Option1()\par
+                option_one_of_two.option12() \par
+\par
+            elif option1 == 1.3:\par
+                break\par
+\par
+            option1 = float(input(f"Choose one of the following options: \\n 1.1 - Enter a BIT student information \\n 1.2 - Enter a DIT student information \\n 1.3 - Go back to the main menu \\n"))    \par
+\par
+            while True:\par
+                if option1 not in [1.1,1.2,1.3]:\par
+                    option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))\par
+                else: \par
+                    break \par
+        \par
+    elif menu == 2:    \par
+        option2 = float(input(f"Choose one of the following options: \\n 2.1 - Print all student grade information ascendingly by final mark\\n 2.2 - Print all student grade information descendingly by final mark \\n 2.3 - Go back to the main menu \\n"))\par
+        \par
+        while True:\par
+            if option2 not in [2.1,2.2,2.3]:\par
+                option2 = float(input(f"Your options are 2.1, 2.2 or 2.3: "))\par
+            else: \par
+                break \par
+\par
+        while True:    \par
+\par
+            if option2 == 2.1:\par
+                option_two_of_one = Option2()\par
+                option_two_of_one.option21() \par
+\par
+            elif option2 == 2.2:\par
+                option_two_of_two = Option2()\par
+                option_two_of_two.option22() \par
+\par
+            elif option2 == 2.3:\par
+                    break\par
+\par
+            option2 = float(input(f"Choose one of the following options: \\n 2.1 - Print all student grade information ascendingly by final mark\\n 2.2 - Print all student grade information descendingly by final mark \\n 2.3 - Go back to the main menu \\n"))\par
+        \par
+            while True:\par
+                if option2 not in [2.1,2.2,2.3]:\par
+                    option2 = float(input(f"Your options are 2.1, 2.2 or 2.3: "))\par
+                else: \par
+                    break \par
+\par
+            \par
+    elif menu == 3:\par
+        option_three = Option3()\par
+        option_three.print_opt3_ans()\par
+        \par
+    elif menu == 4:\par
+        sys.exit("Program exited")    \par
+\par
+    menu = int(input(f"Choose one of the following options: \\n 1 - Enter student grade information \\n 2 - Print all student grade information \\n 3 - Print class performance statistics \\n 4 - Exit \\n"))\par
+\par
+    while True:\par
+        if menu not in [1,2,3,4]:\par
+            menu = int(input(f"Please enter a whole number between 1 and 4: "))\par
+        else:\par
+            break    \par
+}
+ 

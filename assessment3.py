@@ -1,24 +1,113 @@
 import math
 import sys
 
-class Student:
+class ScoreProcessing:
     def __init__(self, scores):
         self.scores = scores
 
     def get_score_list(self):
         list_scores = self.scores.split(",")
-        list_scores = [float(i) for i in list_scores]
-        return list_scores
+        try:
+            list_scores = [float(i) for i in list_scores]
+            return list_scores
+        except ValueError as ve:  
+            return False 
 
     def finalMark(self):
         sum_of_assessments = math.ceil(self.get_score_list()[0] * 0.2 + self.get_score_list()[1] * 0.4 + self.get_score_list()[2] * 0.4)
         return sum_of_assessments
 
+
+class UserInput:
+    def studentIDInput(self):
+        student_id = input("Enter student ID: ")
+        while True:
+            if self.validateStudentId(student_id) == False:
+                print("Student Id must have A capital letter 'A' followed by 8 digits")
+                student_id = input("Enter student ID: ")
+            else:
+                break 
+        return student_id 
+
+    def studentNameInput(self):
+        student_name = input("Enter student name: ")
+        while True:
+            if self.validateStudentName(student_name) == False:
+                print("Please Input First Name and Last Name")
+                student_name = input("Enter student name: ")
+            else:
+                break 
+        return student_name  
+
+    def studentAssessmentInput(self, input_question):
+        student_assessment  = input(input_question)
+        while True:
+            if self.validateStudentAssessments(student_assessment) == False:
+                student_assessment = input(input_question)
+            else:
+                break 
+        return student_assessment   
+
+    def studentSupplementaryScoreInput(self):
+        Supplementary_score = input("What is this student's supplementary exam mark: ")
+        while True:
+            if self.validateStudentSupplementaryScore(Supplementary_score) == False:
+                print("Score must be an integer between 0 and 100")
+                Supplementary_score = input("What is this student's supplementary exam mark: ")
+            else:
+                break
+        return int(Supplementary_score)            
+
     def validateStudentId(self, studentID):
-        pass    
+        character_count = len(studentID)
+        first_character = studentID[0:1] 
+        eight_digits = studentID[-8: ]
+        if character_count == 9:
+            return True
+        else:
+            return False     
 
+        if first_character == "A" and eight_digits.isdigit():
+            return True
+        else:
+            return False 
 
-class BITStudent(Student):
+    def validateStudentName(self, studentName):
+        studentNames = studentName.split(" ")
+        if len(studentNames) != 2:
+            return False
+
+        for x in studentNames:
+            if x.isalpha() == True:
+                continue
+            else:
+                return False
+        return True            
+
+    def validateStudentAssessments(self, scores):
+        if ScoreProcessing(scores).get_score_list() == False:
+            return False
+        if len(ScoreProcessing(scores).get_score_list()) != 3:
+            return False
+        for assessment in ScoreProcessing(scores).get_score_list():
+            if assessment >= 0 and assessment <= 100:
+                continue
+            else: 
+                return False
+        return True
+
+    def validateStudentSupplementaryScore(self, score):
+        try:
+            score = int(score)
+        except ValueError as ve:  
+            return False 
+
+        if score < 0 or score > 100:
+            return False    
+        else:    
+            return True                           
+
+class BITStudent(ScoreProcessing):
     def __init__(self, scores, mark):
         super().__init__(scores)
         self.mark = mark
@@ -97,7 +186,7 @@ class BITStudent(Student):
                 return gradeLetter        
 
 
-class DITStudent(Student):                 
+class DITStudent(ScoreProcessing):                 
     def __init__(self, scores, mark):
         super().__init__(scores)
         self.mark = mark
@@ -150,22 +239,22 @@ class StudentInfo:
         }   
         return student_Info
 
-class Option1:
+class Option1(UserInput):
 
     def option11(self):  
         student_type = "BIT"
-        student_id = input("Enter student ID: ")
-        student_name = input("Enter student name: ")
-        student_assessment = input("Enter student assessment marks (separated by comma): ")
-        student_assessment_list = Student(student_assessment).get_score_list()
-        final_mark = Student(student_assessment).finalMark()
+        student_id = self.studentIDInput()
+        student_name = self.studentNameInput()
+        student_assessment = self.studentAssessmentInput("Enter student assessment marks (separated by comma): ")
+        student_assessment_list = ScoreProcessing(student_assessment).get_score_list()
+        final_mark = ScoreProcessing(student_assessment).finalMark()
         bitStudent = BITStudent(student_assessment, final_mark)
         grade_letter = bitStudent.gradeLetter()
         grade_letter_final = grade_letter
         grade_point = bitStudent.gradePoint(grade_letter)
 
         if grade_letter == "SA" or grade_letter == "SE":
-            Supplementary_score = int(input("What is this student's supplementary exam mark: "))
+            Supplementary_score = self.studentSupplementaryScoreInput()
             grade_letter_final = bitStudent.gradeLetterFinal(Supplementary_score)
             grade_point = bitStudent.gradePoint(grade_letter_final) 
         elif grade_letter == "AF":
@@ -173,60 +262,61 @@ class Option1:
             grade_point = bitStudent.gradePoint(grade_letter_final)      
         
         student_ee = StudentInfo(student_id, student_name, student_type, student_assessment_list, grade_letter, grade_point, final_mark, grade_letter_final)
-        student_scores.append(student_ee.studentPerformance())    
+        student_list.append(student_ee.studentPerformance())   
+
 
     def option12(self):     
         student_type = "DIT"
-        student_id = input("Enter student ID: ")
-        student_name = input("Enter student name: ")
-        student_assessment = input("Enter student assessment marks (separated by comma): ")
-        student_assessment_list = Student(student_assessment).get_score_list()
-        final_mark = Student(student_assessment).finalMark()
+        student_id = self.studentIDInput()
+        student_name = self.studentNameInput()
+        student_assessment = self.studentAssessmentInput("Enter student assessment marks (separated by comma): ")
+        student_assessment_list = ScoreProcessing(student_assessment).get_score_list()
+        final_mark = ScoreProcessing(student_assessment).finalMark()
         ditStudent = DITStudent(student_assessment, final_mark)
         grade_letter = ditStudent.gradeLetter()
         grade_point = ditStudent.gradePoint(grade_letter)  
         grade_letter_final = grade_letter 
 
         if grade_letter == "NYC":
-            resubmission = input("What is this student's resubmission mark: ") 
-            Supplementary_score = Student(resubmission).finalMark() 
+            resubmission = self.studentAssessmentInput("What is this student's resubmission mark: ") 
+            Supplementary_score = ScoreProcessing(resubmission).finalMark() 
             student_assessment = resubmission
-            student_assessment_list = Student(student_assessment).get_score_list()
+            student_assessment_list = ScoreProcessing(student_assessment).get_score_list()
             grade_letter_final = ditStudent.gradeLetterFinal(Supplementary_score)   
             grade_point = ditStudent.gradePoint(grade_letter_final) 
         
         student_ee = StudentInfo(student_id, student_name, student_type, student_assessment_list, grade_letter, grade_point, final_mark, grade_letter_final)
-        student_scores.append(student_ee.studentPerformance())    
+        student_list.append(student_ee.studentPerformance())    
   
 
 class Option2:
 
     def option21(self):  
-        sorted_student_scores = sorted(student_scores, key=lambda d: d['totalMark'], reverse=True)
-        for dic in sorted_student_scores:
+        sorted_student_list = sorted(student_list, key=lambda d: d['totalMark'], reverse=True)
+        for dic in sorted_student_list:
             print(f"{dic['studentID']} \t {dic['name']} \t {dic['studentType']} \t {dic['totalMark']} \t {dic['gradeLetterFinal']} \n")   
 
     def option22(self):     
-        sorted_student_scores = sorted(student_scores, key=lambda d: d['totalMark'])
-        for dic in sorted_student_scores:
+        sorted_student_list = sorted(student_list, key=lambda d: d['totalMark'])
+        for dic in sorted_student_list:
             print(f"{dic['studentID']} \t {dic['name']} \t {dic['studentType']} \t {dic['totalMark']} \t {dic['gradeLetterFinal']} \n")     
 
 class Option3:
 
     def no_students(self):  
-        no_of_students = len(student_scores)
+        no_of_students = len(student_list)
         return no_of_students
 
     def no_BIT_students(self):     
         bit_count = 0
-        for dic in student_scores:
+        for dic in student_list:
             if dic["studentType"] == "BIT":
                 bit_count = bit_count + 1
         return bit_count  
 
     def no_DIT_students(self):     
         dit_count = 0
-        for dic in student_scores:
+        for dic in student_list:
             if dic["studentType"] == "DIT":
                 dit_count = dit_count + 1
         return dit_count
@@ -241,7 +331,7 @@ class Option3:
         no_F = 0
         no_AF = 0
 
-        for dic in student_scores:
+        for dic in student_list:
             if dic["gradeLetterFinal"] == "HD":
                 no_HD += 1
             elif dic["gradeLetterFinal"] == "D":
@@ -292,7 +382,7 @@ class Option3:
         total_asse1 = 0
         number_of_students = self.no_students()
 
-        for dic in student_scores:
+        for dic in student_list:
             total_asse1 = total_asse1 + dic["assessments"][0]
         avg_mark1 = round(total_asse1/number_of_students, 2)
 
@@ -302,7 +392,7 @@ class Option3:
         total_asse2 = 0
         number_of_students = self.no_students()
 
-        for dic in student_scores:
+        for dic in student_list:
             total_asse2 = total_asse2 + dic["assessments"][1]
 
         avg_mark2 = round(total_asse2/number_of_students, 2)
@@ -313,7 +403,7 @@ class Option3:
         total_asse3 = 0
         number_of_students = self.no_students()
 
-        for dic in student_scores:
+        for dic in student_list:
             total_asse3 = total_asse3 + dic["assessments"][2]
 
         avg_mark3 = round(total_asse3/number_of_students, 2)
@@ -324,7 +414,7 @@ class Option3:
         total_final = 0
         number_of_students = self.no_students()
 
-        for dic in student_scores:
+        for dic in student_list:
             total_final = total_final + dic["totalMark"]
 
         avg_markFinal = round(total_final/number_of_students, 2)
@@ -335,7 +425,7 @@ class Option3:
         total_grade_point = 0
         number_of_students = self.no_students()
 
-        for dic in student_scores:
+        for dic in student_list:
             total_grade_point = total_grade_point + dic["gradePoint"]
 
         avg_gradePoint = round(total_grade_point/number_of_students, 1)
@@ -371,12 +461,9 @@ class Option3:
         print(self.avg_final())
         print(self.avg_grade_point())
         self.print_no_of_each_grade()
+        
 
-
-
-
-
-student_scores = []        
+student_list = []        
 
 menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
 
@@ -393,7 +480,6 @@ while True:
 
         while True:
             if option1 not in [1.1,1.2,1.3]:
-                # sys.exit("Please select a valid option")
                 option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))
             else: 
                 break    
@@ -409,12 +495,12 @@ while True:
                 option_one_of_two.option12() 
 
             elif option1 == 1.3:
-                print(student_scores)
                 break
+
+            option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))    
 
             while True:
                 if option1 not in [1.1,1.2,1.3]:
-                    # sys.exit("Please select a valid option")
                     option1 = float(input(f"Your options are 1.1, 1.2 or 1.3: "))
                 else: 
                     break 
@@ -439,7 +525,6 @@ while True:
                 option_two_of_two.option22() 
 
             elif option2 == 2.3:
-                    print(student_scores)
                     break
 
             option2 = float(input(f"Choose one of the following options: \n 2.1 - Print all student grade information ascendingly by final mark\n 2.2 - Print all student grade information descendingly by final mark \n 2.3 - Go back to the main menu \n"))
@@ -467,133 +552,3 @@ while True:
             break    
 
 
-# student_scores = []        
-
-# menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
-
-# if menu not in [1,2,3,4]:
-#     sys.exit("Please enter a whole number between 1 and 4")
-
-# while True:  
-
-#     if menu == 1:
-#         option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
-    
-#         if option1 not in [1.1,1.2,1.3]:
-#             sys.exit("Please select a valid option")
-
-#         while True:
-                
-#             if option1 == 1.1:
-#                 student_type = "BIT"
-#                 student_id = input("Enter student ID: ")
-#                 student_name = input("Enter student name: ")
-#                 student_assessment = input("Enter student assessment marks (separated by comma): ")
-#                 final_mark = Student(student_assessment).finalMark()
-#                 bitStudent = BITStudent(student_assessment, final_mark)
-#                 grade_letter = bitStudent.gradeLetter()
-#                 grade_letter_final = grade_letter
-#                 grade_point = bitStudent.gradePoint(grade_letter)
-
-#                 if grade_letter == "SA" or grade_letter == "SE":
-#                     Supplementary_score = int(input("What is this student's supplementary exam mark: "))
-#                     grade_letter_final = bitStudent.gradeLetterFinal(Supplementary_score)
-#                     grade_point = bitStudent.gradePoint(grade_letter_final) 
-#                 elif grade_letter == "AF":
-#                     grade_letter_final = "F"   
-#                     grade_point = bitStudent.gradePoint(grade_letter_final)      
-                
-#                 student_ee = StudentInfo(student_id, student_name, student_type, student_assessment, grade_letter, grade_point, final_mark, grade_letter_final)
-#                 student_scores.append(student_ee.studentPerformance())  
-
-#             elif option1 == 1.2:   
-#                 student_type = "DIT"
-#                 student_id = input("Enter student ID: ")
-#                 student_name = input("Enter student name: ")
-#                 student_assessment = input("Enter student assessment marks (separated by comma): ")
-#                 final_mark = Student(student_assessment).finalMark()
-#                 ditStudent = DITStudent(student_assessment, final_mark)
-#                 grade_letter = ditStudent.gradeLetter()
-#                 grade_point = ditStudent.gradePoint(grade_letter)  
-#                 grade_letter_final = grade_letter 
-
-#                 if grade_letter == "NYC":
-#                     resubmission = input("What is this student's resubmission mark: ") 
-#                     Supplementary_score = Student(resubmission).finalMark() 
-#                     grade_letter_final = ditStudent.gradeLetterFinal(Supplementary_score)   
-#                     grade_point = ditStudent.gradePoint(grade_letter_final) 
-                
-#                 student_ee = StudentInfo(student_id, student_name, student_type, student_assessment, grade_letter, grade_point, final_mark, grade_letter_final)
-#                 student_scores.append(student_ee.studentPerformance())  
-
-#             elif option1 == 1.3:
-#                 print(student_scores)
-#                 break
-
-#             option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
-        
-#             if option1 not in [1.1,1.2,1.3]:
-#                 sys.exit("Please select a valid option")
-
-#     # menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
-
-#     # if menu not in [1,2,3,4]:
-#     #     sys.exit("Please enter a whole number between 1 and 4")
-
-#     # if menu == 1:
-#     #     option1 = float(input(f"Choose one of the following options: \n 1.1 - Enter a BIT student information \n 1.2 - Enter a DIT student information \n 1.3 - Go back to the main menu \n"))
-        
-#     #     if option1 not in [1.1,1.2,1.3]:
-#     #         sys.exit("Please select a valid option")     
-        
-#     elif menu == 2:    
-#         option2 = float(input(f"Choose one of the following options: \n 2.1 - Print all student grade information ascendingly by final mark\n 2.2 - Print all student grade information descendingly by final mark \n 2.3 - Go back to the main menu \n"))
-        
-#         if option2 not in [2.1,2.2,2.3]:
-#             sys.exit("Please select a valid option")
-
-#         if option2 == 2.1:
-#             sorted_student_scores = sorted(student_scores, key=lambda d: d['totalMark'], reverse=True)
-#             for dic in sorted_student_scores:
-#                 print(f"{dic['studentID']} \t {dic['name']} \t {dic['studentType']} \t {dic['totalMark']} \t {dic['gradeLetterFinal']} \n")   
-
-#         elif option2 == 2.2:
-#             sorted_student_scores = sorted(student_scores, key=lambda d: d['totalMark'])
-#             for dic in sorted_student_scores:
-#                 print(f"{dic['studentID']} \t {dic['name']} \t {dic['studentType']} \t {dic['totalMark']} \t {dic['gradeLetterFinal']} \n")  
-
-#         elif option1 == 2.3:
-#                 print(student_scores)
-#                 break
-            
-#     elif menu == 3:
-#         pass
-        
-#     elif menu == 4:
-#         sys.exit("Program exited")    
-
-#     menu = int(input(f"Choose one of the following options: \n 1 - Enter student grade information \n 2 - Print all student grade information \n 3 - Print class performance statistics \n 4 - Exit \n"))
-
-#     if menu not in [1,2,3,4]:
-#         sys.exit("Please enter a whole number between 1 and 4")    
-
-
-# while True:
-#     slected_students_scores = []
-
-# scores = input("Enter score: ")
-# sic = Student(scores)
-
-# mark = sic.finalMark()
-
-# sib = BITStudent(scores, mark)
-# sid = DITStudent(scores, mark)
-
-# print(sib.gradeLetter())
-# print(sib.gradePoint())
-# print(sid.gradeLetter())
-# print(sid.gradePoint())
-
-# kk = StudentInfo("A98766569", "mary djdj", "BIT", [100,36,50], "SE", 4.0, 74, "SP")
-
-# print(kk.studentPerformance())
